@@ -1,0 +1,7 @@
+[build]
+buildCommand = "npm run install:all && npm run build"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"

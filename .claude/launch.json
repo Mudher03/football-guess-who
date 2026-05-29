@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "server",
+      "runtimeExecutable": "/tmp/node",
+      "runtimeArgs": ["server/index.js"],
+      "cwd": "/Users/mudheral-tekreeti/football-guess-who",
+      "port": 3001
+    },
+    {
+      "name": "client",
+      "runtimeExecutable": "/tmp/node",
+      "runtimeArgs": ["/Users/mudheral-tekreeti/football-guess-who/client/node_modules/vite/bin/vite.js", "--port", "5173"],
+      "cwd": "/Users/mudheral-tekreeti/football-guess-who/client",
+      "port": 5173
+    }
+  ]
+}
