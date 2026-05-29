@@ -4,10 +4,10 @@ import { socket } from '../socket';
 
 export default function Home() {
   const navigate = useNavigate();
-  const [joinCode, setJoinCode]   = useState('');
+  const [joinCode, setJoinCode]     = useState('');
   const [playerName, setPlayerName] = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState('');
 
   useEffect(() => {
     if (!socket.connected) socket.connect();
@@ -52,14 +52,19 @@ export default function Home() {
   }
 
   return (
-    <div className="page center">
-      <div className="card home-card">
-        <div className="logo-area">
-          <div className="logo">⚽</div>
-          <h1>Football Guess Who</h1>
-          <p className="subtitle">Real-time two-player guessing game. Challenge a friend!</p>
-        </div>
+    <div className="home-page">
+      {/* Background glow */}
+      <div className="home-glow" />
 
+      {/* Hero */}
+      <header className="home-hero">
+        <span className="home-ball">⚽</span>
+        <h1 className="home-title">Football Guess Who</h1>
+        <p className="home-sub">Real-time two-player guessing game · Challenge a friend!</p>
+      </header>
+
+      {/* Action card */}
+      <div className="home-card">
         <div className="home-name-row">
           <input
             className="name-input"
@@ -67,10 +72,15 @@ export default function Home() {
             value={playerName}
             maxLength={20}
             onChange={e => setPlayerName(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleCreate()}
           />
         </div>
 
-        <button className="btn btn-primary btn-lg" onClick={handleCreate} disabled={loading}>
+        <button
+          className="btn btn-primary btn-lg home-cta"
+          onClick={handleCreate}
+          disabled={loading}
+        >
           {loading ? 'Creating…' : '⚡ Create Game'}
         </button>
 
@@ -79,7 +89,7 @@ export default function Home() {
         <form onSubmit={handleJoin} className="join-form">
           <input
             type="text"
-            placeholder="Enter room code (e.g. AB12CD)"
+            placeholder="Room code (e.g. AB12CD)"
             value={joinCode}
             maxLength={6}
             onChange={e => setJoinCode(e.target.value.toUpperCase())}
@@ -87,17 +97,40 @@ export default function Home() {
             autoComplete="off"
             spellCheck={false}
           />
-          <button type="submit" className="btn btn-secondary" disabled={loading || !joinCode.trim()}>
+          <button
+            type="submit"
+            className="btn btn-secondary"
+            disabled={loading || !joinCode.trim()}
+          >
             Join →
           </button>
         </form>
 
         {error && <p className="error-msg">{error}</p>}
+      </div>
 
-        <div className="home-features">
-          <div className="feature-item">🏟 150+ real footballers</div>
-          <div className="feature-item">⚡ Real-time multiplayer</div>
-          <div className="feature-item">⚙ Fully configurable</div>
+      {/* Features */}
+      <div className="home-features">
+        <div className="hf-item">
+          <span className="hf-icon">🏟</span>
+          <div>
+            <div className="hf-title">155+ Footballers</div>
+            <div className="hf-desc">PL, La Liga, Bundesliga, Serie A & Ligue 1</div>
+          </div>
+        </div>
+        <div className="hf-item">
+          <span className="hf-icon">⚡</span>
+          <div>
+            <div className="hf-title">Real-time Multiplayer</div>
+            <div className="hf-desc">No account needed · Instant play</div>
+          </div>
+        </div>
+        <div className="hf-item">
+          <span className="hf-icon">⚙</span>
+          <div>
+            <div className="hf-title">Fully Configurable</div>
+            <div className="hf-desc">Filter by nation, league &amp; win conditions</div>
+          </div>
         </div>
       </div>
     </div>
