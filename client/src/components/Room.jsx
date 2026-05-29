@@ -38,7 +38,7 @@ export default function Room() {
   // ── UI preferences (local) ────────────────────────────────────────────────
   const [cardSize, setCardSize]             = useState(() => localStorage.getItem('cardSize') || 'medium');
   const [showClub, setShowClub]             = useState(() => localStorage.getItem('showClub') !== 'false');
-  const [showNationality, setShowNationality] = useState(() => localStorage.getItem('showNationality') === 'true');
+  const [showNationality, setShowNationality] = useState(() => localStorage.getItem('showNationality') !== 'false');
   const [soundOn, setSoundOn]               = useState(() => localStorage.getItem('soundOn') !== 'false');
   const [darkMode, setDarkMode]             = useState(() => localStorage.getItem('darkMode') !== 'false');
 
@@ -57,6 +57,8 @@ export default function Room() {
 
   // ── Socket setup ──────────────────────────────────────────────────────────
   useEffect(() => {
+    let mounted = true; // guard: prevents stale socket handlers firing after unmount
+
     const storedName = sessionStorage.getItem('playerName') || '';
     const storedIndex = sessionStorage.getItem('myIndex');
     setPlayerName(storedName);
@@ -67,14 +69,20 @@ export default function Room() {
     // If we navigated here without going through Home (direct URL), try to join
     if (!storedName) {
       socket.emit('join-room', { code, playerName: 'Player 2' });
-    } else if (storedName === 'Player 1') {
-      setPhase('waiting');
     } else {
       setPhase('waiting');
+      // Auto-copy share link for the host who just created the room
+      if (storedIndex === '0') {
+        const url = `${window.location.origin}/room/${code}`;
+        navigator.clipboard?.writeText(url).catch(() => {});
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      }
     }
 
     // ── Lobby events ──────────────────────────────────────────────────────
     socket.on('room-joined', ({ code: c, playerName: pName, myIndex: idx }) => {
+      if (!mounted) return;
       const mi = idx ?? 1;
       sessionStorage.setItem('playerName', pName);
       sessionStorage.setItem('myIndex', mi);
@@ -84,39 +92,45 @@ export default function Room() {
     });
 
     socket.on('player-connected', ({ players: pl, settings: s }) => {
+      if (!mounted) return;
       setPlayers(pl || ['Player 1', 'Player 2']);
       if (s) setSettings(s);
       setPhase('settings');
     });
 
     socket.on('settings-updated', ({ settings: s }) => {
+      if (!mounted) return;
       setSettings(s);
       setPlayers(s.playerNames || ['Player 1', 'Player 2']);
       setSettingsError('');
     });
 
-    socket.on('rules-updated', ({ settings: s }) => setSettings(s));
+    socket.on('rules-updated', ({ settings: s }) => { if (mounted) setSettings(s); });
 
     socket.on('names-updated', ({ playerNames: pn }) => {
+      if (!mounted) return;
       setPlayers(pn);
       setSettings(prev => ({ ...prev, playerNames: pn }));
     });
 
-    socket.on('settings-error', ({ message }) => setSettingsError(message));
+    socket.on('settings-error', ({ message }) => { if (mounted) setSettingsError(message); });
 
     socket.on('action-error', ({ message }) => {
+      if (!mounted) return;
       setActionError(message);
-      setTimeout(() => setActionError(''), 3500);
+      setTimeout(() => { if (mounted) setActionError(''); }, 3500);
     });
 
     socket.on('join-error', ({ message }) => {
+      if (!mounted) return;
       setError(message);
       setPhase('error');
     });
 
-    socket.on('opponent-disconnected', () => setPhase('disconnected'));
+    socket.on('opponent-disconnected', () => { if (mounted) setPhase('disconnected'); });
 
     socket.on('returned-to-lobby', ({ settings: s }) => {
+      if (!mounted) return;
       setSettings(s);
       setGameState(null);
       setRoundResult(null);
@@ -126,6 +140,7 @@ export default function Room() {
 
     // ── Game events ───────────────────────────────────────────────────────
     socket.on('game-started', (data) => {
+      if (!mounted) return;
       setMyIndex(data.myIndex);
       sessionStorage.setItem('myIndex', data.myIndex);
 
@@ -149,6 +164,7 @@ export default function Room() {
     });
 
     socket.on('question-asked', ({ question, askerIndex, questionCounts, questionLimit: ql }) => {
+      if (!mounted) return;
       setGameState(prev => prev ? {
         ...prev,
         pendingQuestion: { question, askerIndex },
@@ -158,6 +174,7 @@ export default function Room() {
     });
 
     socket.on('question-answered', ({ question, answer, askerIndex, currentTurn, qaLog }) => {
+      if (!mounted) return;
       setGameState(prev => prev ? {
         ...prev,
         qaLog: qaLog || [...prev.qaLog, { question, answer, askerIndex }],
@@ -167,6 +184,7 @@ export default function Room() {
     });
 
     socket.on('wrong-guess', ({ guesserIndex, guessedPlayerId, attemptsLeft, currentTurn }) => {
+      if (!mounted) return;
       setGameState(prev => {
         if (!prev) return prev;
         const newLeft = [...(prev.guessAttemptsLeft ?? [3, 3])];
@@ -176,21 +194,25 @@ export default function Room() {
     });
 
     socket.on('guess-result', (result) => {
+      if (!mounted) return;
       setRoundResult(result);
       setReadyStatus([false, false]);
       setPhase('round-over');
     });
 
     socket.on('game-ended', (result) => {
+      if (!mounted) return;
       setGameResult(result);
       setPhase('ended');
     });
 
     socket.on('next-round-ready-status', ({ readyStatus: rs }) => {
+      if (!mounted) return;
       setReadyStatus(rs || [false, false]);
     });
 
     return () => {
+      mounted = false;
       [
         'room-joined','player-connected','settings-updated','rules-updated',
         'names-updated','settings-error','action-error','join-error',
@@ -367,24 +389,38 @@ export default function Room() {
   // phase === 'waiting'
   return (
     <div className="page center">
-      <div className="card">
+      <div className="card waiting-card">
         <div className="status-icon">⏳</div>
         <h2>Waiting for opponent…</h2>
         <div className="room-code-box">
           <span className="room-code-label">Room Code</span>
           <span className="room-code">{code}</span>
         </div>
-        <p className="muted">Share this link:</p>
+        <p className="muted">Share this link with your friend:</p>
         <div className="share-row">
           <input className="share-input" readOnly value={shareUrl} onClick={e => e.target.select()} />
           <button className="btn btn-secondary" onClick={copyLink}>
-            {copied ? '✓ Copied' : '📋 Copy'}
+            {copied ? '✓ Copied!' : '📋 Copy'}
           </button>
         </div>
+        {copied && isHost && (
+          <p className="muted" style={{ fontSize: 12, textAlign: 'center', color: 'var(--accent)', marginBottom: 4 }}>
+            ✓ Link copied to clipboard automatically
+          </p>
+        )}
         <div className="tag-row">
           <span className="tag">You are: <strong>{playerName || '…'}</strong></span>
         </div>
         <Spinner />
+        <div className="waiting-tips">
+          <div className="waiting-tips-title">💡 How to play</div>
+          <ul className="waiting-tips-list">
+            <li>Each player gets a secret footballer — your opponent must guess yours</li>
+            <li>Take turns asking yes/no questions to narrow it down</li>
+            <li>Click cards on the board to eliminate players who don't match</li>
+            <li>When ready, hit <strong>Guess Their Player!</strong> — wrong guesses cost an attempt</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

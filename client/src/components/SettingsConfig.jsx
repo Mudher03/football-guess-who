@@ -99,7 +99,7 @@ export default function SettingsConfig({ settings, onUpdate, onStart, isHost, er
       {/* Nation filter */}
       <div className="settings-section">
         <div className="section-label">Nations <span className="section-hint">(leave blank = all)</span></div>
-        <div className="chip-grid">
+        <div className="nation-chip-grid">
           {TOP_NATIONS.map(n => (
             <button
               key={n}

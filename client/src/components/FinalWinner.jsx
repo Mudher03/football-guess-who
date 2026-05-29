@@ -61,8 +61,13 @@ export default function FinalWinner({ result, myIndex, playerNames, onPlayAgain,
                   <div key={i} className={`rh-row${r.winnerIndex === myIndex ? ' rh-me' : ' rh-opp'}`}>
                     <span className="rh-round">Round {r.round}</span>
                     <span className="rh-winner">
-                      {r.reason === 'forfeit' ? '🏳 Forfeit' : r.reason === 'correct-guess' ? '✓ Correct' : r.reason === 'guess-exhausted' ? '💀 No guesses left' : '✗ Wrong'}
-                      {' '}{roundWinnerName}
+                      {r.reason === 'forfeit'
+                        ? `🏳 Opp forfeited — ${roundWinnerName} wins`
+                        : r.reason === 'correct-guess'
+                        ? `✓ ${roundWinnerName} guessed correctly`
+                        : r.reason === 'guess-exhausted'
+                        ? `💀 Guesses used — ${roundWinnerName} wins`
+                        : `✗ Wrong guess — ${roundWinnerName} wins`}
                     </span>
                     <span className="rh-score">{r.scores[0]} – {r.scores[1]}</span>
                   </div>
