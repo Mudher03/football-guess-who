@@ -56,7 +56,7 @@ export default function RoundOver({ result, myIndex, playerNames, readyStatus, o
           <div className="reveal-player">
             <img
               className="reveal-avatar"
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(mySecret.name)}&background=1e3554&color=7dd3fc&size=72&bold=true`}
+              src={mySecret.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(mySecret.name)}&background=1e3554&color=7dd3fc&size=72&bold=true`}
               alt={mySecret.name}
             />
             <div className="reveal-label">Your Secret Player</div>
@@ -67,7 +67,7 @@ export default function RoundOver({ result, myIndex, playerNames, readyStatus, o
           <div className="reveal-player">
             <img
               className="reveal-avatar"
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(oppSecret.name)}&background=1e3554&color=7dd3fc&size=72&bold=true`}
+              src={oppSecret.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(oppSecret.name)}&background=1e3554&color=7dd3fc&size=72&bold=true`}
               alt={oppSecret.name}
             />
             <div className="reveal-label">Opponent's Player</div>

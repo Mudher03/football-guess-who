@@ -206,12 +206,22 @@ const ALL_PLAYERS = [
 
 // Deduplicate by lowercase name (safety net for future additions)
 const _seen = new Set();
-const PLAYERS = ALL_PLAYERS.filter(p => {
+const PLAYERS_RAW = ALL_PLAYERS.filter(p => {
   const key = p.name.toLowerCase();
   if (_seen.has(key)) return false;
   _seen.add(key);
   return true;
 });
+
+// Merge in pre-fetched player photos
+const _photosPath = require('path').join(__dirname, 'data', 'player-photos.json');
+let _photos = {};
+try { _photos = require(_photosPath); } catch {}
+
+const PLAYERS = PLAYERS_RAW.map(p => ({
+  ...p,
+  photo: _photos[p.id] || null,
+}));
 
 const TOP_NATIONS = ['Brazil','France','England','Spain','Germany','Argentina','Portugal','Italy','Netherlands','Belgium'];
 const TOP_LEAGUES = ['Premier League','La Liga','Bundesliga','Serie A','Ligue 1'];

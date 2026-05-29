@@ -42,9 +42,10 @@ export default function GuessModal({ pool, eliminated, attemptsLeft = 3, maxAtte
               >
                 <img
                   className="guess-avatar"
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=1e3a5f&color=7dd3fc&size=48&bold=true`}
+                  src={p.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=1e3a5f&color=7dd3fc&size=48&bold=true`}
                   alt={p.name}
                   loading="lazy"
+                  onError={e => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=1e3a5f&color=7dd3fc&size=48&bold=true`; }}
                 />
                 <div className="guess-card-name">{p.name}</div>
                 <div className="guess-card-meta">{p.club}</div>

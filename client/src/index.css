@@ -416,10 +416,10 @@ select.inline-select {
 .card-back { background: var(--card-elim); transform: rotateY(180deg); }
 .card-back-x { font-size: 2rem; opacity: .45; color: var(--muted); }
 
-.player-avatar { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-.player-card-small  .player-avatar { width: 36px; height: 36px; }
-.player-card-medium .player-avatar { width: 48px; height: 48px; }
-.player-card-large  .player-avatar { width: 60px; height: 60px; }
+.player-avatar { border-radius: 8px; object-fit: cover; object-position: top; flex-shrink: 0; background: var(--bg3); }
+.player-card-small  .player-avatar { width: 44px;  height: 52px;  border-radius: 6px; }
+.player-card-medium .player-avatar { width: 64px;  height: 76px;  border-radius: 8px; }
+.player-card-large  .player-avatar { width: 84px;  height: 100px; border-radius: 10px; }
 
 .player-card-name { font-weight: 700; text-align: center; line-height: 1.2; word-break: break-word; }
 .player-card-small  .player-card-name { font-size: 9px; }
@@ -459,7 +459,7 @@ select.inline-select {
   border-radius: var(--radius); padding: 12px; text-align: center;
 }
 .secret-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; font-weight: 700; }
-.secret-avatar { width: 56px; height: 56px; border-radius: 50%; margin-bottom: 6px; }
+.secret-avatar { width: 72px; height: 88px; border-radius: 10px; object-fit: cover; object-position: top; margin-bottom: 6px; background: var(--bg3); }
 .secret-name   { font-family: var(--font-d); font-size: 1.3rem; letter-spacing: .5px; margin-bottom: 4px; }
 .secret-meta   { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap; }
 
@@ -558,7 +558,7 @@ select.inline-select {
 .guess-card:hover    { border-color: var(--accent); transform: translateY(-2px); }
 .guess-card.selected { border-color: var(--gold); background: rgba(255,215,0,.1); }
 .guess-card.guess-elim { opacity: .4; }
-.guess-avatar    { border-radius: 50%; width: 44px; height: 44px; }
+.guess-avatar    { border-radius: 8px; width: 56px; height: 68px; object-fit: cover; object-position: top; background: var(--bg3); }
 .guess-card-name { font-weight: 700; font-size: 11px; line-height: 1.2; }
 .guess-card-meta { font-size: 10px; color: var(--muted); }
 .guess-card-pos  { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; color: #fff; }
@@ -580,7 +580,7 @@ select.inline-select {
   border-radius: var(--radius); padding: 16px; margin: 1.5rem 0;
 }
 .reveal-player { flex: 1; text-align: center; }
-.reveal-avatar { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 8px; }
+.reveal-avatar { width: 80px; height: 96px; border-radius: 10px; object-fit: cover; object-position: top; margin-bottom: 8px; background: var(--bg3); }
 .reveal-label  { font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-bottom: 4px; }
 .reveal-name   { font-family: var(--font-d); font-size: 1.3rem; letter-spacing: .5px; }
 .reveal-sub    { font-size: 12px; color: var(--muted); }

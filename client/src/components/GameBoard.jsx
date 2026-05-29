@@ -81,7 +81,8 @@ export default function GameBoard({
     onToggleEliminated(id);
   }
 
-  const secretAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(secretPlayer.name)}&background=0d4f1e&color=39ff14&size=64&bold=true`;
+  const secretAvatarUrl = secretPlayer.photo
+    || `https://ui-avatars.com/api/?name=${encodeURIComponent(secretPlayer.name)}&background=0d4f1e&color=39ff14&size=64&bold=true`;
 
   return (
     <div className="game-page">
